@@ -25,35 +25,57 @@ interface Product {
 const products: Product[] = [
   {
     id: 1,
-    name: 'AirPods Pro (копия)',
-    price: '3 990 ₽',
+    name: 'AirPods 2 (копия)',
+    price: '1 300 ₽',
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
-    features: ['Активное шумоподавление', 'Прозрачный режим', 'Пространственный звук', 'До 4.5 часов работы'],
+    features: ['Беспроводная зарядка', 'Автоматическое подключение', 'Сенсорное управление', 'До 5 часов работы'],
     comparison: {
-      original: 'Оригинал: 24 990 ₽',
-      copy: 'Копия: 3 990 ₽'
+      original: 'Оригинал: 14 990 ₽',
+      copy: 'Копия: 1 300 ₽'
     }
   },
   {
     id: 2,
-    name: 'Apple Watch Series 8 (копия)',
-    price: '5 490 ₽',
-    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/6cf04e1d-336c-4b52-9e19-92e79ce7ce1a.jpg',
-    features: ['Экран Always-On', 'Мониторинг здоровья', 'Водонепроницаемость', 'До 18 часов работы'],
+    name: 'AirPods Pro 2 (копия)',
+    price: '1 500 ₽',
+    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
+    features: ['Активное шумоподавление', 'Прозрачный режим', 'Пространственный звук', 'До 6 часов работы'],
     comparison: {
-      original: 'Оригинал: 44 990 ₽',
-      copy: 'Копия: 5 490 ₽'
+      original: 'Оригинал: 24 990 ₽',
+      copy: 'Копия: 1 500 ₽'
     }
   },
   {
     id: 3,
-    name: 'MagSafe зарядка (копия)',
-    price: '1 290 ₽',
-    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/2a6a8784-dcb9-4553-bf26-2feeb5bb0a1d.jpg',
-    features: ['Быстрая зарядка 15W', 'Магнитное крепление', 'Совместимость с iPhone', 'Компактный дизайн'],
+    name: 'AirPods 3 (копия)',
+    price: '1 500 ₽',
+    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
+    features: ['Адаптивный эквалайзер', 'Защита от воды и пота', 'Пространственный звук', 'До 6 часов работы'],
     comparison: {
-      original: 'Оригинал: 4 490 ₽',
-      copy: 'Копия: 1 290 ₽'
+      original: 'Оригинал: 19 990 ₽',
+      copy: 'Копия: 1 500 ₽'
+    }
+  },
+  {
+    id: 4,
+    name: 'Apple Watch 10 (копия)',
+    price: '5 500 ₽',
+    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/6cf04e1d-336c-4b52-9e19-92e79ce7ce1a.jpg',
+    features: ['Экран Always-On', 'Мониторинг здоровья', 'Водонепроницаемость', 'До 18 часов работы'],
+    comparison: {
+      original: 'Оригинал: 49 990 ₽',
+      copy: 'Копия: 5 500 ₽'
+    }
+  },
+  {
+    id: 5,
+    name: 'Блок зарядки Apple (копия)',
+    price: '999 ₽',
+    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/2a6a8784-dcb9-4553-bf26-2feeb5bb0a1d.jpg',
+    features: ['Быстрая зарядка 20W', 'Компактный дизайн', 'Защита от перегрева', 'USB-C выход'],
+    comparison: {
+      original: 'Оригинал: 2 490 ₽',
+      copy: 'Копия: 999 ₽'
     }
   }
 ];
@@ -371,9 +393,11 @@ const Index = () => {
                 <p className="text-white/90 mb-6">
                   Подпишитесь на наш Telegram-канал, чтобы первыми узнавать о новинках
                 </p>
-                <Button variant="secondary" size="lg">
-                  <Icon name="Bell" className="mr-2 h-5 w-5" />
-                  Подписаться
+                <Button variant="secondary" size="lg" asChild>
+                  <a href="https://t.me/airzoneshoop" target="_blank" rel="noopener noreferrer">
+                    <Icon name="Bell" className="mr-2 h-5 w-5" />
+                    Подписаться
+                  </a>
                 </Button>
               </CardContent>
             </Card>
@@ -394,9 +418,11 @@ const Index = () => {
                   </div>
                   <h3 className="text-xl font-bold mb-2">Telegram</h3>
                   <p className="text-muted-foreground mb-4">Быстрая связь через мессенджер</p>
-                  <Button className="w-full" size="lg">
-                    <Icon name="Send" className="mr-2 h-4 w-4" />
-                    Написать в Telegram
+                  <Button className="w-full" size="lg" asChild>
+                    <a href="https://t.me/tox1s69" target="_blank" rel="noopener noreferrer">
+                      <Icon name="Send" className="mr-2 h-4 w-4" />
+                      @tox1s69
+                    </a>
                   </Button>
                 </CardContent>
               </Card>
@@ -485,7 +511,8 @@ const Index = () => {
             <div>
               <h4 className="font-bold mb-4">Контакты</h4>
               <ul className="space-y-2 text-sm text-secondary-foreground/70">
-                <li>Telegram: @airzone</li>
+                <li>Telegram: @tox1s69</li>
+                <li>Канал: @airzoneshoop</li>
                 <li>Работаем 24/7</li>
               </ul>
             </div>
