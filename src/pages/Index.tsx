@@ -9,11 +9,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 interface Product {
   id: number;
   name: string;
   price: string;
+  priceNum: number;
   image: string;
   features: string[];
   comparison: {
@@ -22,11 +30,16 @@ interface Product {
   };
 }
 
+interface CartItem extends Product {
+  quantity: number;
+}
+
 const products: Product[] = [
   {
     id: 1,
     name: 'AirPods 2 (копия)',
     price: '1 300 ₽',
+    priceNum: 1300,
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
     features: ['Беспроводная зарядка', 'Автоматическое подключение', 'Сенсорное управление', 'До 5 часов работы'],
     comparison: {
@@ -38,6 +51,7 @@ const products: Product[] = [
     id: 2,
     name: 'AirPods Pro 2 (копия)',
     price: '1 500 ₽',
+    priceNum: 1500,
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
     features: ['Активное шумоподавление', 'Прозрачный режим', 'Пространственный звук', 'До 6 часов работы'],
     comparison: {
@@ -49,6 +63,7 @@ const products: Product[] = [
     id: 3,
     name: 'AirPods 3 (копия)',
     price: '1 500 ₽',
+    priceNum: 1500,
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
     features: ['Адаптивный эквалайзер', 'Защита от воды и пота', 'Пространственный звук', 'До 6 часов работы'],
     comparison: {
@@ -58,8 +73,21 @@ const products: Product[] = [
   },
   {
     id: 4,
+    name: 'AirPods 4 (копия)',
+    price: '1 600 ₽',
+    priceNum: 1600,
+    image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/b1d1af5f-404d-4a12-b1ee-5addc2a72fa6.jpg',
+    features: ['Новый дизайн', 'Улучшенный звук', 'Защита от воды', 'До 5 часов работы'],
+    comparison: {
+      original: 'Оригинал: 21 990 ₽',
+      copy: 'Копия: 1 600 ₽'
+    }
+  },
+  {
+    id: 5,
     name: 'Apple Watch 10 (копия)',
     price: '5 500 ₽',
+    priceNum: 5500,
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/6cf04e1d-336c-4b52-9e19-92e79ce7ce1a.jpg',
     features: ['Экран Always-On', 'Мониторинг здоровья', 'Водонепроницаемость', 'До 18 часов работы'],
     comparison: {
@@ -68,9 +96,10 @@ const products: Product[] = [
     }
   },
   {
-    id: 5,
+    id: 6,
     name: 'Блок зарядки Apple (копия)',
     price: '999 ₽',
+    priceNum: 999,
     image: 'https://cdn.poehali.dev/projects/36c6d6e2-3305-41ab-8575-7d6df6cb1b41/files/2a6a8784-dcb9-4553-bf26-2feeb5bb0a1d.jpg',
     features: ['Быстрая зарядка 20W', 'Компактный дизайн', 'Защита от перегрева', 'USB-C выход'],
     comparison: {
@@ -83,6 +112,38 @@ const products: Product[] = [
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
   const [compareProduct, setCompareProduct] = useState<number | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const addToCart = (product: Product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    setIsCartOpen(true);
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCart((prev) => prev.filter((item) => item.id !== productId));
+  };
+
+  const updateQuantity = (productId: number, change: number) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === productId
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    );
+  };
+
+  const cartTotal = cart.reduce((sum, item) => sum + item.priceNum * item.quantity, 0);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const sectionRefs = {
     home: useRef<HTMLElement>(null),
     about: useRef<HTMLElement>(null),
@@ -147,10 +208,95 @@ const Index = () => {
                 </button>
               ))}
             </div>
-            <Button size="sm" className="hidden md:flex">
-              <Icon name="ShoppingCart" className="mr-2 h-4 w-4" />
-              Корзина
-            </Button>
+            <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+              <SheetTrigger asChild>
+                <Button size="sm" className="hidden md:flex relative">
+                  <Icon name="ShoppingCart" className="mr-2 h-4 w-4" />
+                  Корзина
+                  {cartCount > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {cartCount}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="w-full sm:max-w-lg">
+                <SheetHeader>
+                  <SheetTitle>Корзина ({cartCount})</SheetTitle>
+                </SheetHeader>
+                <div className="mt-8 flex flex-col h-full">
+                  {cart.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center text-center">
+                      <div>
+                        <Icon name="ShoppingCart" className="mx-auto h-16 w-16 text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground">Корзина пуста</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex-1 overflow-auto space-y-4">
+                        {cart.map((item) => (
+                          <Card key={item.id}>
+                            <CardContent className="p-4">
+                              <div className="flex gap-4">
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="w-20 h-20 object-cover rounded-lg"
+                                />
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-sm mb-1">{item.name}</h4>
+                                  <p className="text-primary font-bold">{item.price}</p>
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 w-7 p-0"
+                                      onClick={() => updateQuantity(item.id, -1)}
+                                    >
+                                      <Icon name="Minus" className="h-3 w-3" />
+                                    </Button>
+                                    <span className="text-sm w-8 text-center">{item.quantity}</span>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-7 w-7 p-0"
+                                      onClick={() => updateQuantity(item.id, 1)}
+                                    >
+                                      <Icon name="Plus" className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="ghost"
+                                      className="ml-auto h-7 w-7 p-0 text-destructive"
+                                      onClick={() => removeFromCart(item.id)}
+                                    >
+                                      <Icon name="Trash2" className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                      <div className="border-t pt-4 mt-4 space-y-4">
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>Итого:</span>
+                          <span>{cartTotal.toLocaleString('ru-RU')} ₽</span>
+                        </div>
+                        <Button className="w-full" size="lg" asChild>
+                          <a href="https://t.me/tox1s69" target="_blank" rel="noopener noreferrer">
+                            <Icon name="Send" className="mr-2 h-4 w-4" />
+                            Оформить заказ
+                          </a>
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
@@ -286,7 +432,7 @@ const Index = () => {
                         </div>
                       </div>
                     )}
-                    <Button className="w-full mt-2">
+                    <Button className="w-full mt-2" onClick={() => addToCart(product)}>
                       <Icon name="ShoppingCart" className="mr-2 h-4 w-4" />
                       В корзину
                     </Button>
